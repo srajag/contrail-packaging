@@ -36,8 +36,10 @@ PACKAGES = \
         contrail \
         ifmap-server \
         ifmap-python-client \
+        igb_uio-deb \
         contrail-nova-vif-deb \
         contrail-vrouter-init-deb \
+        contrail-vrouter-dpdk-init-deb \
 	contrail-web-core-deb \
 	contrail-web-controller-deb \
 	contrail-nodemgr-deb \

@@ -7,7 +7,7 @@ SPEC_DIR := $(shell pwd)
 export SB_TOP := $(shell pwd | sed -re "s/(.*)\/tools\/packaging\/(.*)/\1/")
 
 export BUILDTIME := $(shell date -u +%y%m%d%H%M)
-export buildroot := ${SB_TOP}/build/debian/contrail-vrouter-init
+export buildroot := ${SB_TOP}/build/debian/contrail-vrouter-dpdk-init
 export _confsrcdir := ${SB_TOP}/tools/packaging/common/control_files
 
 export _supervisorconf := /etc/contrail/supervisord_vrouter_files
@@ -34,7 +34,7 @@ override_dh_auto_install:
 	install -d -m 755 ${buildroot}${_opt_bin}
 	install -d -m 755 ${buildroot}${_supervisorconf}
 	install -d -m 755 ${buildroot}/var/log/contrail
-	install -p -m 644 $(_confsrcdir)/supervisor-vrouter.upstart ${buildroot}/etc/init/supervisor-vrouter.conf
+	install -p -m 644 $(_confsrcdir)/supervisor-vrouter-dpdk.upstart ${buildroot}/etc/init/supervisor-vrouter.conf
 	install -p -m 644 $(_confsrcdir)/core-pattern.upstart ${buildroot}/etc/init/core-pattern.conf
 	ln -sf /lib/init/upstart-job ${buildroot}/etc/init.d/supervisor-vrouter
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter.initd.supervisord ${buildroot}/etc/init.d/contrail-vrouter-agent
@@ -44,12 +44,10 @@ override_dh_auto_install:
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter-agent.ini ${buildroot}${_supervisorconf}
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter-dpdk.ini ${buildroot}${_supervisorconf}
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter.rules ${buildroot}${_supervisorconf}
-	install -p -m 755 $(_confsrcdir)/vrouter-pre-start.sh ${buildroot}${_opt_bin}
-	install -p -m 755 $(_confsrcdir)/vrouter-post-start.sh ${buildroot}${_opt_bin}
+	install -p -m 755 $(_confsrcdir)/vrouter-dpdk-pre-start.sh ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/vrouter-pre-stop.sh ${buildroot}${_opt_bin}
+	install -p -m 755 $(_confsrcdir)/dpdk_nic_bind.py ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/vnagent_param_setup_ubuntu.sh ${buildroot}${_opt_bin}/vnagent_param_setup.sh
-	install -p -m 755 $(_confsrcdir)/if-vhost0 ${buildroot}${_opt_bin}/if-vhost0
-	install -p -m 755 $(_confsrcdir)/vrouter-functions.sh ${buildroot}${_opt_bin}/vrouter-functions.sh
 	install -p -m 755 $(_confsrcdir)/contrail_reboot  ${buildroot}/etc/contrail/contrail_reboot
 	install -p -m 755 $(_confsrcdir)/agent.conf  ${buildroot}/etc/contrail/rpm_agent.conf
 
