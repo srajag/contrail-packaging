@@ -231,9 +231,14 @@ libvirt-deb:
 		rm -rf ${LIBDIR}/libvirt-1.2.7; \
 		(cd ${LIBDIR}; dpkg-source -x libvirt_1.2.7-0ubuntu1.dsc); \
 		(cd ${LIBDIR}/libvirt-1.2.7; dpkg-buildpackage -b -uc); \
-		(cd ${LIBDIR}; mv libvirt0_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
-		(cd ${LIBDIR}; mv libvirt-bin_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
-		(cd ${LIBDIR}; mv python-libvirt_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
+		(cd ${LIBDIR}; cp libvirt0_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
+		(cd ${LIBDIR}; cp libvirt-bin_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
+		rm -rf ${LIBDIR}/libvirt-python-1.2.7; \
+		(cd ${LIBDIR}; dpkg-source -x libvirt-python_1.2.7-0ubuntu1.dsc); \
+		(cd ${LIBDIR}; sudo dpkg -i libvirt0_1.2.7-0ubuntu1_amd64.deb); \
+		(cd ${LIBDIR}; sudo dpkg -i libvirt-dev_1.2.7-0ubuntu1_amd64.deb); \
+		(cd ${LIBDIR}/libvirt-python-1.2.7; dpkg-buildpackage -b -uc); \
+		(cd ${LIBDIR}; cp python-libvirt_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
 		(cd ${LIBDIR}; rm *.deb); \
 	fi
 libvirt-clean:
