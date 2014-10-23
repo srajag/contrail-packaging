@@ -228,16 +228,12 @@ libvirt-deb:
 	$(eval LIBDIR=${SB_TOP}/third_party/libvirt)
 	$(eval BUILDDIR=${SB_TOP}/build/debian)
 	if test -d ${LIBDIR}; then \
-		rm -rf ${LIBDIR}/libvirt-0.9.8; \
-		(cd ${LIBDIR}; dpkg-source -x libvirt_0.9.8-2ubuntu17.17.dsc); \
-		(cd ${LIBDIR}; patch -p0 -i libvirt.ubuntu.patch); \
-		(cd ${LIBDIR}; patch -p0 -i libvirt.ubuntu.test-disable.patch); \
-		(cd ${LIBDIR}; patch -p0 -i libvirt.ubuntu.gnulib_test_disable.patch); \
-		(cd ${LIBDIR}; patch -p0 -i libvirt_0.9.8_17.17.ubuntu.version.patch); \
-		(cd ${LIBDIR}/libvirt-0.9.8; dpkg-buildpackage -b -uc); \
-		(cd ${LIBDIR}; mv libvirt0_0.9.8-2ubuntu17.17_amd64.deb ${BUILDDIR}); \
-		(cd ${LIBDIR}; mv libvirt-bin_0.9.8-2ubuntu17.17_amd64.deb ${BUILDDIR}); \
-		(cd ${LIBDIR}; mv python-libvirt_0.9.8-2ubuntu17.17_amd64.deb ${BUILDDIR}); \
+		rm -rf ${LIBDIR}/libvirt-1.2.7; \
+		(cd ${LIBDIR}; dpkg-source -x libvirt_1.2.7-0ubuntu1.dsc); \
+		(cd ${LIBDIR}/libvirt-1.2.7; dpkg-buildpackage -b -uc); \
+		(cd ${LIBDIR}; mv libvirt0_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
+		(cd ${LIBDIR}; mv libvirt-bin_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
+		(cd ${LIBDIR}; mv python-libvirt_1.2.7-0ubuntu1_amd64.deb ${BUILDDIR}); \
 		(cd ${LIBDIR}; rm *.deb); \
 	fi
 libvirt-clean:
