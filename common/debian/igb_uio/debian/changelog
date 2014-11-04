@@ -1,6 +1,0 @@
-igb-uio-dkms (1.7.1) stable; urgency=low
-
-  * Automatically packaged by DKMS.
-
- -- Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>  Tue, 30 Sep 2014 21:18:49 +0200
-

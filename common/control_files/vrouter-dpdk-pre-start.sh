@@ -57,9 +57,6 @@ function create_virtual_gateway() {
    done
 }
 
-modprobe uio
-igb=/var/lib/dkms/igb_uio/1.7.1/`uname -r`/x86_64/module/igb_uio.ko
-insmod $igb
 /opt/contrail/bin/dpdk_nic_bind.py --force --bind=igb_uio $dev
 echo "$(date): Value $vgw_subnet_ip" &>> $LOG
 if [ $vgw_subnet_ip != __VGW_SUBNET_IP__ ] 
