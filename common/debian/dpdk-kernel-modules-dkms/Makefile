@@ -25,5 +25,5 @@ endif
 #postinst, only if we are supporting legacy mode
 ifeq ("$(wildcard common.postinst)", "common.postinst")
 	install -d "$(SHARE)"
-	install -m 755 $(PREFIX)/usr/lib/dkms/common.postinst $(SHARE)/postinst
+	install -m 755 common.postinst $(SHARE)/postinst
 endif
