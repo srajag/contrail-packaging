@@ -5,7 +5,7 @@ stop on runlevel [016]
 limit core unlimited unlimited
 
 pre-start script
-#    /opt/contrail/bin/vrouter-pre-start.sh
+    /opt/contrail/bin/vrouter-pre-start.sh
     ulimit -s unlimited
     ulimit -c unlimited
     ulimit -d unlimited
