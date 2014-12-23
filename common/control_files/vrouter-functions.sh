@@ -1,5 +1,4 @@
 #!/bin/bash
-
 source /etc/contrail/agent_param
 
 function pkt_setup () {
@@ -20,6 +19,9 @@ function pkt_setup () {
     done
 }
 
+#
+# For vRouter/DPDK we use instead vrouter_dpdk_start() function below
+#
 function insert_vrouter() {
     grep $kmod /proc/modules 1>/dev/null 2>&1
     if [ $? != 0 ]; then 
@@ -73,4 +75,138 @@ function insert_vrouter() {
         fi
     fi
     return 0
+}
+
+#
+# For kernel vRouter we use instead insert_vrouter() function above
+#
+function vrouter_dpdk_start() {
+    # wait for vRouter/DPDK to start
+    echo "$(date): Waiting for vRouter/DPDK to start..."
+    service ${VROUTER_SERVICE} start
+    loops=0
+    while ! is_vrouter_dpdk_running
+    do
+        sleep 1
+        loops=$(($loops + 1))
+        if [ $loops -ge 60 ]; then
+            echo "No vRouter/DPDK running."
+            echo "Please check if ${VROUTER_SERVICE} service is up and running."
+            return 1
+        fi
+    done
+
+    # TODO: at the moment we have no interface deletion, so this loop might
+    #       be unnecessary in the future
+    echo "$(date): Waiting for Agent to configure $DEVICE..."
+    loops=0
+    while [ ! -L /sys/class/net/vhost0 ]
+    do
+        sleep 1
+        loops=$(($loops + 1))
+        if [ $loops -ge 10 ]; then
+            break
+        fi
+    done
+
+    # check if vhost0 is not present, then create vhost0 and $dev
+    if [ ! -L /sys/class/net/vhost0 ]; then
+        echo "$(date): Creating vhost interface: $DEVICE."
+        agent_conf_read
+
+        DEV_MAC=${physical_interface_mac}
+        DEV_PCI=${physical_interface_address}
+
+        if [ -z "${DEV_MAC}" -o -z "${DEV_PCI}" ]; then
+            echo "No device configuration found in ${AGENT_CONF_FILE}"
+            return 1
+        fi
+
+        # TODO: the vhost creation is happening later in vif --add
+#        vif --create $DEVICE --mac $DEV_MAC
+#        if [ $? != 0 ]; then
+#            echo "$(date): Error creating interface: $DEVICE"
+#        fi
+
+        echo "$(date): Adding $dev to vrouter"
+        # add DPDK ethdev 0 as a physical interface
+        vif --add 0 --mac $DEV_MAC --vrf 0 --vhost-phys --type physical --pmd --id 0
+        if [ $? != 0 ]; then
+            echo "$(date): Error adding $dev to vrouter"
+        fi
+
+        # TODO: vif --xconnect seems does not work without --id parameter?
+        vif --add $DEVICE --mac $DEV_MAC --vrf 0 --type vhost --xconnect 0 --pmd --id 1
+        if [ $? != 0 ]; then
+            echo "$(date): Error adding $DEVICE to vrouter"
+        fi
+    fi
+    return 0
+}
+
+AGENT_CONF_FILE=/etc/contrail/contrail-vrouter-agent.conf
+DPDK_BIND=/opt/contrail/bin/dpdk_nic_bind.py
+VROUTER_SERVICE="supervisor-vrouter"
+
+function is_vrouter_dpdk_running() {
+    # check for NetLink TCP socket
+    lsof -ni:20914 -sTCP:LISTEN > /dev/null
+
+    return $?
+}
+
+function agent_conf_read() {
+    eval `cat ${AGENT_CONF_FILE} | grep '^\w*physical_'`
+}
+
+function vrouter_dpdk_if_bind() {
+    if [ ! -s /sys/class/net/${dev}/address ]; then
+        echo "No ${dev} device found."
+        ${DPDK_BIND} --status
+        return 1
+    fi
+
+    modprobe igb_uio
+    modprobe rte_kni
+
+    ${DPDK_BIND} --force --bind=igb_uio $dev
+    ${DPDK_BIND} --status
+}
+
+function vrouter_dpdk_if_unbind() {
+    if [ -s /sys/class/net/${dev}/address ]; then
+        echo "Device ${dev} is already unbinded."
+        ${DPDK_BIND} --status
+        return 1
+    fi
+
+    agent_conf_read
+
+    DEV_PCI=${physical_interface_address}
+    DEV_DRIVER=`lspci -vmmks ${DEV_PCI} | grep 'Module:' | cut -d $'\t' -f 2`
+
+    if [ -z "${DEV_DRIVER}" -o -z "${DEV_PCI}" ]; then
+        echo "No device ${dev} configuration found in ${AGENT_DPDK_PARAMS_FILE}"
+        return 1
+    fi
+
+    # wait for vRouter/DPDK to stop
+    echo "$(date): Waiting for vRouter/DPDK to stop..."
+    loops=0
+    while is_vrouter_dpdk_running
+    do
+        sleep 1
+        loops=$(($loops + 1))
+        if [ $loops -ge 60 ]; then
+            echo "vRouter/DPDK is still running."
+            echo "Please try to stop ${VROUTER_SERVICE} service."
+            return 1
+        fi
+    done
+
+    ${DPDK_BIND} --force --bind=${DEV_DRIVER} ${DEV_PCI}
+    ${DPDK_BIND} --status
+
+    rmmod rte_kni
+    rmmod igb_uio
 }
