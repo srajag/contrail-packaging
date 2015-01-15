@@ -45,12 +45,12 @@ override_dh_auto_install:
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter-dpdk.ini ${buildroot}${_supervisorconf}
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter.rules ${buildroot}${_supervisorconf}
 	install -p -m 755 $(_confsrcdir)/vrouter-dpdk-pre-start.sh ${buildroot}${_opt_bin}
-	install -p -m 755 $(_confsrcdir)/vrouter-dpdk-post-start.sh ${buildroot}${_opt_bin}
+	install -p -m 755 $(_confsrcdir)/vrouter-pre-start.sh ${buildroot}${_opt_bin}/vrouter-dpdk-post-start.sh
 	install -p -m 755 $(_confsrcdir)/vrouter-dpdk-post-stop.sh ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/vrouter-pre-stop.sh ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/dpdk_nic_bind.py ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/vnagent_param_setup_ubuntu.sh ${buildroot}${_opt_bin}/vnagent_param_setup.sh
-	install -p -m 755 $(_confsrcdir)/if-vhost0-dpdk ${buildroot}${_opt_bin}/if-vhost0
+	install -p -m 755 $(_confsrcdir)/if-vhost0 ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/vrouter-functions.sh ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/contrail_reboot  ${buildroot}/etc/contrail/contrail_reboot
 	install -p -m 755 $(_confsrcdir)/agent.conf  ${buildroot}/etc/contrail/rpm_agent.conf
