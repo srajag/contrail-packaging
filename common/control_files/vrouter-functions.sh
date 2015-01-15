@@ -19,10 +19,12 @@ function pkt_setup () {
     done
 }
 
-#
-# For vRouter/DPDK we use instead vrouter_dpdk_start() function below
-#
 function insert_vrouter() {
+    if cat $CONFIG | grep '^\s*platform\s*=\s*dpdk\b' &>/dev/null; then
+        vrouter_dpdk_start
+        return $?
+    fi
+
     grep $kmod /proc/modules 1>/dev/null 2>&1
     if [ $? != 0 ]; then 
         modprobe $kmod
@@ -77,9 +79,6 @@ function insert_vrouter() {
     return 0
 }
 
-#
-# For kernel vRouter we use instead insert_vrouter() function above
-#
 function vrouter_dpdk_start() {
     # wait for vRouter/DPDK to start
     echo "$(date): Waiting for vRouter/DPDK to start..."
