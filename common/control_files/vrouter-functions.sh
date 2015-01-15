@@ -118,7 +118,7 @@ function vrouter_dpdk_start() {
         DEV_PCI=${physical_interface_address}
 
         if [ -z "${DEV_MAC}" -o -z "${DEV_PCI}" ]; then
-            echo "No device configuration found in ${AGENT_CONF_FILE}"
+            echo "No device configuration found in ${CONFIG}"
             return 1
         fi
 
@@ -144,7 +144,6 @@ function vrouter_dpdk_start() {
     return 0
 }
 
-AGENT_CONF_FILE=/etc/contrail/contrail-vrouter-agent.conf
 DPDK_BIND=/opt/contrail/bin/dpdk_nic_bind.py
 VROUTER_SERVICE="supervisor-vrouter"
 
@@ -156,7 +155,7 @@ function is_vrouter_dpdk_running() {
 }
 
 function agent_conf_read() {
-    eval `cat ${AGENT_CONF_FILE} | grep '^\w*physical_'`
+    eval `cat ${CONFIG} | grep -E '^\s*physical_\w+\s*='`
 }
 
 function vrouter_dpdk_if_bind() {
