@@ -165,7 +165,8 @@ function vrouter_dpdk_if_bind() {
     fi
 
     modprobe igb_uio
-    modprobe rte_kni
+    # multiple kthreads for port monitoring
+    modprobe rte_kni kthread_mode=multiple
 
     ${DPDK_BIND} --force --bind=igb_uio $dev
     ${DPDK_BIND} --status
