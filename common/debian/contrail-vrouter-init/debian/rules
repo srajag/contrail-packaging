@@ -36,7 +36,6 @@ override_dh_auto_install:
 	install -d -m 755 ${buildroot}/var/log/contrail
 	install -p -m 644 $(_confsrcdir)/core-pattern.upstart ${buildroot}/etc/init/core-pattern.conf
 	install -p -m 644 $(_confsrcdir)/contrail-nodemgr-vrouter.ini ${buildroot}${_supervisorconf}
-	install -p -m 644 $(_confsrcdir)/contrail-vrouter-dpdk.ini ${buildroot}${_supervisorconf}
 	install -p -m 644 $(_confsrcdir)/contrail-vrouter.rules ${buildroot}${_supervisorconf}
 	install -p -m 755 $(_confsrcdir)/vrouter-pre-start.sh ${buildroot}${_opt_bin}
 	install -p -m 755 $(_confsrcdir)/vrouter-post-start.sh ${buildroot}${_opt_bin}
