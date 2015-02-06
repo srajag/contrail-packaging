@@ -11,4 +11,4 @@ Depends: contrail-vrouter-utils,
     python-opencontrail-vrouter-netns,
     supervisor
 Priority: optional
-Description: OpenContrai\DPDK compute-node startup and monitoring scripts.
+Description: OpenContrail/DPDK compute-node startup and monitoring scripts.
