@@ -104,7 +104,6 @@ PACKAGES = \
 	$(CONTRAIL_HEAT) \
 	neutron-plugin-contrail-deb \
 	$(CEILOMETER_PLUGIN) \
-	contrail-f5-deb
 
 all: ${PACKAGES}
 	@echo "Build complete"
@@ -129,7 +128,6 @@ PACKAGES_VMWARE = \
         contrail-fabric-utils-deb \
         contrail-test-deb \
         libvirt-deb \
-	contrail-f5-deb \
         contrail-vmware-config-deb \
         contrail-vmware-utils-deb \
         contrail-vmware-vrouter-deb
