@@ -104,7 +104,6 @@ PACKAGES = \
 	$(CONTRAIL_HEAT) \
 	neutron-plugin-contrail-deb \
 	$(CEILOMETER_PLUGIN) \
-	contrail-f5-deb \
 	contrail-vmware-utils-deb
 
 all: ${PACKAGES}
